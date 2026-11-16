@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>8 Milyarda 1 | 1 in 8 Billion</title>
+  <style>
+    :root {
+      --bg: #08090c;
+      --surface: #11131a;
+      --surface-elevated: #171a23;
+      --border: #242936;
+      --border-strong: #363d4f;
+      --text: #f3f4f6;
+      --muted: #8b94a5;
+      --accent: #00d2ff;
+      --accent-dim: rgba(0, 210, 255, 0.12);
+      --danger: #ff3b3b;
+      --success: #00e676;
+      --warning: #ffb300;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation; /* iPhone çift tık zoom ve dokunma gecikmesini sıfırlar */
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      background-image: radial-gradient(#1b1f2b 1px, transparent 1px);
+      background-size: 18px 18px;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+    }
+
+    body.tension-red {
+      background-color: #160507;
+      background-image: radial-gradient(#380d12 1px, transparent 1px);
+    }
+
+    .app {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 12px 14px 24px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .app::-webkit-scrollbar { display: none; }
+
+    /* TOP BAR */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 2px;
+      animation: blinkRec 1.4s infinite;
+    }
+
+    @keyframes blinkRec {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .chip-btn {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+    }
+    .chip-btn:active { background: var(--surface-elevated); transform: translateY(1px); }
+
+    /* SEED BANNER */
+    .seed-banner {
+      background: rgba(255, 179, 0, 0.1);
+      border: 1px solid rgba(255, 179, 0, 0.45);
+      color: #ffd54f;
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: var(--mono);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .hidden { display: none !important; }
+
+    /* POPULATION TELEMETRY CARD */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      top: -1px;
+      left: 12px;
+      width: 36px;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .pop-label {
+      font-size: 10px;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-badge {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .pop-number {
+      font-family: var(--mono);
+      font-size: clamp(26px, 7vw, 35px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 4px 0 8px;
+      color: #ffffff;
+    }
+
+    .map-wrap {
+      position: relative;
+      width: 100%;
+      height: 138px;
+      border-radius: 6px;
+      background: #06070a;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    #worldCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .birth-ticker {
+      margin-top: 8px;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 18px;
+    }
+
+    .birth-pulse {
+      color: var(--accent);
+      animation: fadeSlide 0.28s ease;
+    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(-4px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ARENA TABS */
+    .arena-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .arena-scroll::-webkit-scrollbar { display: none; }
+
+    .arena-pill {
+      flex: 0 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 11px;
+      cursor: pointer;
+      min-width: 122px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .arena-pill.active {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .arena-pill .a-title {
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .arena-pill .a-sub {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* MODE SEGMENTED CONTROL */
+    .control-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: var(--surface);
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .mode-btn.active {
+      color: #fff;
+      background: var(--surface-elevated);
+      border-color: var(--border-strong);
+    }
+
+    /* PLAYER INPUTS */
+    .player-bar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .flag-select, .name-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      outline: none;
+    }
+    .name-input:focus { border-color: var(--accent); }
+    .flag-select { width: 78px; }
+    .name-input { flex: 1; }
+
+    /* TACTICAL ACTION BUTTONS */
+    .shield-btn {
+      width: 100%;
+      background: var(--surface);
+      border: 1px dashed #6b5318;
+      color: #fbbf24;
+      padding: 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .shield-btn.armed {
+      background: rgba(0, 230, 118, 0.08);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .start-btn {
+      width: 100%;
+      background: var(--accent);
+      border: none;
+      border-bottom: 3px solid rgba(0, 0, 0, 0.45);
+      color: #04070d;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .start-btn:active {
+      transform: translateY(2px);
+      border-bottom-width: 1px;
+    }
+
+    /* PRACTICE GRID */
+    .section-head {
+      font-size: 10px;
+      font-family: var(--mono);
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .practice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .prac-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .prac-card:active { border-color: var(--accent); background: var(--surface-elevated); }
+    .prac-title { font-size: 12px; font-weight: 700; color: var(--text); }
+    .prac-best { font-size: 11px; font-family: var(--mono); color: var(--accent); font-weight: 700; }
+
+    /* GAMEPLAY VIEW */
+    .game-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .hud-top {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      flex-shrink: 0;
+    }
+
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .hud-survivors {
+      font-family: var(--mono);
+      font-size: 25px;
+      font-weight: 800;
+      margin: 3px 0;
+      color: #fff;
+    }
+
+    .timer-track {
+      width: 100%;
+      height: 6px;
+      background: #06070a;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--accent);
+    }
+
+    .arena-stage {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .mg-prompt {
+      font-size: 18px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .mg-sub {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .mg-body {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+      min-height: 0;
+    }
+
+    .elim-feed {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--muted);
+      text-align: center;
+      min-height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* TRANSITION OVERLAY (750ms ANTI-CLICK-BLEED) */
+    .round-intermission {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 9, 12, 0.96);
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      text-align: center;
+      pointer-events: all;
+    }
+
+    .inter-badge {
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .inter-count {
+      font-family: var(--mono);
+      font-size: 34px;
+      font-weight: 800;
+      color: #fff;
+      margin: 4px 0 10px;
+    }
+
+    .inter-msg {
+      font-size: 15px;
+      font-weight: 600;
+      color: #d1d5db;
+      max-width: 330px;
+      line-height: 1.45;
+    }
+
+    /* TACTICAL MICRO-GAME BUTTONS */
+    .big-action-btn {
+      width: 100%;
+      max-width: 270px;
+      padding: 18px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      border-bottom: 4px solid var(--accent);
+      background: var(--surface-elevated);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+    .big-action-btn:active {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+      background: var(--accent-dim);
+    }
+
+    .clock-readout {
+      font-family: var(--mono);
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .choice-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .choice-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-bottom: 3px solid #050608;
+      border-radius: 8px;
+      padding: 15px 10px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .choice-card:active {
+      transform: translateY(2px);
+      border-bottom-width: 1px;
+    }
+
+    .grid-4x4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      width: 100%;
+      max-width: 268px;
+    }
+
+    .cell-btn {
+      aspect-ratio: 1;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .cell-btn:active { background: var(--accent-dim); border-color: var(--accent); }
+
+    .grid-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: 100%;
+      max-width: 228px;
+    }
+
+    .mem-cell {
+      aspect-ratio: 1;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .mem-cell.lit {
+      background: var(--accent);
+      border-color: #fff;
+    }
+
+    /* MODALS */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 5, 8, 0.9);
+      z-index: 80;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 18px;
+      width: 100%;
+      max-width: 400px;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .res-rank {
+      font-family: var(--mono);
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--accent);
+      margin: 4px 0;
+    }
+
+    .res-stats {
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 10px 0;
+      font-size: 12px;
+      font-family: var(--mono);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .res-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+    }
+    .res-row strong { color: #fff; }
+
+    .btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .btn-revive {
+      background: var(--warning);
+      border: none;
+      border-bottom: 3px solid #996b00;
+      color: #000;
+      font-weight: 900;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-secondary {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-strong);
+      color: #fff;
+      font-weight: 700;
+      padding: 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .lb-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      font-family: var(--mono);
+    }
+    .lb-item.me {
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-dot" id="brandDot"></span>
+        <span id="appTitle">8 MİLYARDA 1</span>
+      </div>
+      <div class="top-actions">
+        <button class="chip-btn" id="btnLeaderboard">🏆 <span data-i18n="records">Rekorlar</span></button>
+        <button class="chip-btn" id="btnLang">EN</button>
+      </div>
+    </div>
+
+    <!-- SEED CHALLENGE BANNER -->
+    <div class="seed-banner hidden" id="seedBanner">
+      <span id="seedText">⚔️ Meydan Okuma Tohumu Aktif</span>
+      <button class="chip-btn" id="btnClearSeed">✕</button>
+    </div>
+
+    <!-- HOME VIEW -->
+    <div id="homeView" style="display:flex; flex-direction:column; gap:9px;">
+      <div class="hero-card">
+        <div class="pop-label">
+          <span id="arenaPopLabel">CANLI DÜNYA NÜFUSU</span>
+          <span class="live-badge">● CANLI AKIŞ</span>
+        </div>
+        <div class="pop-number" id="livePopDisplay">8.245.671.890</div>
+        <div class="map-wrap">
+          <canvas id="worldCanvas"></canvas>
+        </div>
+        <div class="birth-ticker">
+          <span class="birth-pulse" id="birthTicker">+1 Yeni Yaşam • İstanbul, TR</span>
+          <span id="birthRateHint">+4.3 / sn</span>
+        </div>
+      </div>
+
+      <!-- ARENAS -->
+      <div class="arena-scroll" id="arenaScroll"></div>
+
+      <!-- MODE & PLAYER -->
+      <div class="control-grid">
+        <button class="mode-btn active" id="modeElim" data-mode="elim">🎯 <span data-i18n="modeElim">Eleme (Son 1)</span></button>
+        <button class="mode-btn" id="modeEndless" data-mode="endless">♾️ <span data-i18n="modeEndless">Sonsuz Rekor</span></button>
+      </div>
+
+      <div class="player-bar">
+        <select class="flag-select" id="flagSelect">
+          <option value="🇹🇷">🇹🇷 TR</option>
+          <option value="🇺🇸">🇺🇸 US</option>
+          <option value="🇩🇪">🇩🇪 DE</option>
+          <option value="🇬🇧">🇬🇧 UK</option>
+          <option value="🇯🇵">🇯🇵 JP</option>
+          <option value="🇰🇷">🇰🇷 KR</option>
+          <option value="🇧🇷">🇧🇷 BR</option>
+          <option value="🇪🇸">🇪🇸 ES</option>
+          <option value="🇫🇷">🇫🇷 FR</option>
+          <option value="🇮🇳">🇮🇳 IN</option>
+        </select>
+        <input type="text" class="name-input" id="playerNameInput" maxlength="14" placeholder="Takma adın..." />
+      </div>
+
+      <button class="shield-btn" id="btnShield">🛡️ <span data-i18n="shieldOff">Kısa Reklam İzle: 1 Hata Kalkanı Al</span></button>
+
+      <button class="start-btn" id="btnStart">🔒 <span data-i18n="startBtn">NÜFUSU KİLİTLE VE BAŞLA</span></button>
+
+      <!-- PRACTICE STRIP -->
+      <div class="section-head">
+        <span data-i18n="practiceTitle">⚡ Antrenman Modu</span>
+        <span data-i18n="practiceSub">Baskısız Isınma</span>
+      </div>
+      <div class="practice-grid" id="practiceGrid"></div>
+    </div>
+
+    <!-- GAME VIEW -->
+    <div id="gameView" class="game-screen hidden">
+      <div class="hud-top">
+        <div class="hud-row">
+          <span id="hudRound">TUR 1 / 33</span>
+          <span id="hudBadges"></span>
+          <button class="chip-btn" id="btnQuitGame" style="padding:2px 7px;">✕</button>
+        </div>
+        <div class="hud-survivors" id="hudSurvivors">8.245.671.890</div>
+        <div class="timer-track">
+          <div class="timer-fill" id="timerFill"></div>
+        </div>
+      </div>
+
+      <div class="arena-stage" id="arenaStage">
+        <div>
+          <div class="mg-prompt" id="mgPrompt">HAZIRLAN...</div>
+          <div class="mg-sub" id="mgSub"></div>
+        </div>
+        <div class="mg-body" id="mgBody"></div>
+        <div class="elim-feed" id="elimFeed"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 750ms ANTI-CLICK-BLEED INTERMISSION OVERLAY -->
+  <div class="round-intermission hidden" id="intermissionOverlay">
+    <div class="inter-badge" id="interBadge">TUR GEÇİLDİ ✓</div>
+    <div class="inter-count" id="interCount">4.122.835.945</div>
+    <div class="inter-msg" id="interMsg">Ellerin şu an hayatta kalan 4 milyar insandan daha hızlıymış!</div>
+  </div>
+
+  <!-- RESULT MODAL -->
+  <div class="modal-backdrop hidden" id="resultModal">
+    <div class="modal-card">
+      <div style="font-size:11px; font-family:var(--mono); color:var(--muted); font-weight:800;" id="resSubtitle">ELENDİN</div>
+      <div class="res-rank" id="resRank">#16</div>
+      <div style="font-size:13px; color:#d1d5db;" id="resReason">Süre doldu!</div>
+
+      <div class="res-stats" id="resStats"></div>
+
+      <div class="btn-stack">
+        <button class="btn-revive hidden" id="btnRevive">🎬 <span data-i18n="reviveBtn">Reklam İzle ve Hakkını Kurtar (1 Hak)</span></button>
+        <button class="start-btn" style="padding:12px; font-size:14px;" id="btnPlayAgain">🔄 <span data-i18n="playAgain">Tekrar Oyna</span></button>
+        <button class="btn-secondary" id="btnDownloadCard">📸 <span data-i18n="downloadCard">9:16 Hikaye Kartı İndir</span></button>
+        <button class="btn-secondary" id="btnChallenge">⚔️ <span data-i18n="challengeBtn">Arkadaşına Meydan Oku (Link Kopyala)</span></button>
+        <button class="btn-secondary" id="btnHomeResult">🏠 <span data-i18n="homeBtn">Ana Ekrana Dön</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD MODAL -->
+  <div class="modal-backdrop hidden" id="lbModal">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <strong style="font-size:14px;" data-i18n="lbTitle">🏆 Küresel Sıralama & Rekorların</strong>
+        <button class="chip-btn" id="btnCloseLb">✕</button>
+      </div>
+      <div id="personalBestBox" class="res-stats"></div>
+      <div id="lbList"></div>
+    </div>
+  </div>
+
+  <!-- AD SIMULATION OVERLAY -->
+  <div class="modal-backdrop hidden" id="adModal">
+    <div class="modal-card" style="text-align:center;">
+      <div style="font-size:11px; font-family:var(--mono); color:var(--warning); font-weight:800;">ÖDÜLLÜ BAĞLANTI</div>
+      <div style="font-family:var(--mono); font-size:32px; font-weight:900; margin:14px 0;" id="adCountdown">3</div>
+      <div style="font-size:12px; color:var(--muted);" id="adDesc">Ödülün hazırlanıyor...</div>
+    </div>
+  </div>
+
+  <canvas id="storyCanvas" width="1080" height="1920" class="hidden"></canvas>
+
+  <script>
+    /* =========================================================
+       1. I18N (TR / EN)
+    ========================================================= */
+    let lang = localStorage.getItem('1in8b_lang') || 'tr';
+
+    const I18N = {
+      tr: {
+        title: '8 MİLYARDA 1',
+        records: 'Rekorlar',
+        modeElim: 'Eleme (Son 1)',
+        modeEndless: 'Sonsuz Rekor',
+        shieldOff: 'Kısa Reklam İzle: 1 Hata Kalkanı Al',
+        shieldOn: '🛡️ Hata Kalkanı Aktif (İlk hatanı emer)',
+        startBtn: 'NÜFUSU KİLİTLE VE BAŞLA',
+        practiceTitle: '⚡ Antrenman Modu',
+        practiceSub: 'Baskısız Isınma',
+        reviveBtn: 'Reklam İzle ve Hakkını Kurtar (1 Hak)',
+        playAgain: 'Tekrar Oyna',
+        downloadCard: '9:16 Hikaye Kartı İndir',
+        challengeBtn: 'Arkadaşına Meydan Oku (Link Kopyala)',
+        homeBtn: 'Ana Ekrana Dön',
+        lbTitle: '🏆 Küresel Sıralama & Rekorların',
+        roundPassed: 'TUR GEÇİLDİ ✓',
+        shieldSaved: '🛡️ KALKAN SENİ KURTARDI!',
+        practiceDone: 'ANTRENMAN TAMAMLANDI',
+        eliminated: 'ELENDİN',
+        champion: 'DÜNYADA TEK KALDIN! 👑',
+        copied: 'Meydan okuma linki kopyalandı!',
+        lockedPop: 'Kilitlenen Nüfus',
+        reachedRound: 'Ulaşılan Tur',
+        beatenPct: 'Geride Bırakılan',
+        bestEndless: 'Sonsuz Mod Rekorun'
+      },
+      en: {
+        title: '1 IN 8 BILLION',
+        records: 'Records',
+        modeElim: 'Elimination (Last 1)',
+        modeEndless: 'Endless Record',
+        shieldOff: 'Watch Short Ad: Get 1 Error Shield',
+        shieldOn: '🛡️ Error Shield Armed (Absorbs 1 mistake)',
+        startBtn: 'LOCK POPULATION & START',
+        practiceTitle: '⚡ Practice Drills',
+        practiceSub: 'No Pressure',
+        reviveBtn: 'Watch Ad & Revive Run (1 Left)',
+        playAgain: 'Play Again',
+        downloadCard: 'Download 9:16 Story Card',
+        challengeBtn: 'Challenge a Friend (Copy Link)',
+        homeBtn: 'Back to Home',
+        lbTitle: '🏆 Global Leaderboard & Your Bests',
+        roundPassed: 'ROUND CLEARED ✓',
+        shieldSaved: '🛡️ SHIELD SAVED YOUR RUN!',
+        practiceDone: 'DRILL COMPLETE',
+        eliminated: 'ELIMINATED',
+        champion: 'LAST HUMAN STANDING! 👑',
+        copied: 'Challenge link copied to clipboard!',
+        lockedPop: 'Locked Population',
+        reachedRound: 'Round Reached',
+        beatenPct: 'Humanity Outlasted',
+        bestEndless: 'Your Endless Record'
+      }
+    };
+
+    function t(key) {
+      return (I18N[lang] && I18N[lang][key]) || key;
+    }
+
+    function applyLanguage() {
+      document.getElementById('appTitle').textContent = t('title');
+      document.getElementById('btnLang').textContent = lang === 'tr' ? 'EN' : 'TR';
+      document.getElementById('playerNameInput').placeholder = lang === 'tr' ? 'Takma adın...' : 'Your nickname...';
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        el.textContent = t(k);
+      });
+      updateShieldUI();
+      renderArenas();
+      renderPracticeGrid();
+    }
+
+    /* =========================================================
+       2. WEB AUDIO API SYNTHESIZER
+    ========================================================= */
+    let audioCtx = null;
+    function ensureAudio() {
+      if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTone(freq, type = 'sine', duration = 0.12, vol = 0.08) {
+      try {
+        ensureAudio();
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function sfxLock() {
+      playTone(150, 'sawtooth', 0.14, 0.12);
+      setTimeout(() => playTone(95, 'square', 0.22, 0.14), 70);
+    }
+    function sfxWin() {
+      playTone(523.25, 'triangle', 0.1, 0.1);
+      setTimeout(() => playTone(783.99, 'triangle', 0.16, 0.1), 65);
+    }
+    function sfxFail() {
+      playTone(180, 'sawtooth', 0.25, 0.14);
+      setTimeout(() => playTone(110, 'sawtooth', 0.35, 0.14), 120);
+    }
+    function sfxHeartbeat() {
+      playTone(62, 'sine', 0.11, 0.18);
+      setTimeout(() => playTone(52, 'sine', 0.14, 0.14), 130);
+    }
+
+    /* =========================================================
+       3. ARENAS & LIVE POPULATION ENGINE
+    ========================================================= */
+    const ARENAS = [
+      {
+        id: 'earth',
+        icon: '🌍',
+        name: { tr: 'Dünya', en: 'Earth' },
+        sub: { tr: '8.24B • Standart', en: '8.24B • Standard' },
+        label: { tr: 'CANLI DÜNYA NÜFUSU', en: 'LIVE WORLD POPULATION' },
+        basePop: 8245670000,
+        ratePerSec: 4.32,
+        speedMult: 1.0,
+        accent: '#00d2ff',
+        accentDim: 'rgba(0, 210, 255, 0.12)',
+        cities: [
+          { name: 'İstanbul, TR', x: 0.57, y: 0.34, w: 8 },
+          { name: 'Mumbai, IN', x: 0.69, y: 0.48, w: 22 },
+          { name: 'Lagos, NG', x: 0.50, y: 0.55, w: 18 },
+          { name: 'Jakarta, ID', x: 0.78, y: 0.60, w: 14 },
+          { name: 'São Paulo, BR', x: 0.34, y: 0.68, w: 11 },
+          { name: 'New York, US', x: 0.27, y: 0.35, w: 10 },
+          { name: 'Tokyo, JP', x: 0.85, y: 0.37, w: 9 },
+          { name: 'Cairo, EG', x: 0.57, y: 0.42, w: 11 },
+          { name: 'Berlin, DE', x: 0.52, y: 0.28, w: 7 },
+          { name: 'Seoul, KR', x: 0.82, y: 0.36, w: 8 }
+        ]
+      },
+      {
+        id: 'mars',
+        icon: '🔴',
+        name: { tr: 'Mars Kolonisi', en: 'Mars Colony' },
+        sub: { tr: '4.29B • +%12 Hız', en: '4.29B • +12% Speed' },
+        label: { tr: 'MARS KOLONİ NÜFUSU', en: 'MARS COLONY POPULATION' },
+        basePop: 4294967296,
+        ratePerSec: 6.8,
+        speedMult: 1.12,
+        accent: '#00e676',
+        accentDim: 'rgba(0, 230, 118, 0.12)',
+        cities: [
+          { name: 'Olympus Base', x: 0.24, y: 0.38, w: 15 },
+          { name: 'Valles Marineris', x: 0.36, y: 0.54, w: 18 },
+          { name: 'Jezero Dome', x: 0.64, y: 0.42, w: 16 },
+          { name: 'Hellas Outpost', x: 0.71, y: 0.68, w: 12 },
+          { name: 'Arcadia Sector', x: 0.48, y: 0.27, w: 14 }
+        ]
+      },
+      {
+        id: 'andromeda',
+        icon: '🌌',
+        name: { tr: 'Andromeda', en: 'Andromeda' },
+        sub: { tr: '17.1B • Zihin Odak', en: '17.1B • Mind Focus' },
+        label: { tr: 'ANDROMEDA VARLIK AĞI', en: 'ANDROMEDA ENTITY GRID' },
+        basePop: 17179869184,
+        ratePerSec: 11.4,
+        speedMult: 1.05,
+        accent: '#c084fc',
+        accentDim: 'rgba(192, 132, 252, 0.12)',
+        cities: [
+          { name: 'Core Nexus M31', x: 0.50, y: 0.50, w: 20 },
+          { name: 'NGC-205 Drift', x: 0.32, y: 0.35, w: 14 },
+          { name: 'Triangulum Gate', x: 0.72, y: 0.62, w: 15 },
+          { name: 'Outer Halo 9', x: 0.66, y: 0.28, w: 12 }
+        ]
+      },
+      {
+        id: 'cyber',
+        icon: '💠',
+        name: { tr: 'Siber Çekirdek', en: 'Cyber Core' },
+        sub: { tr: '1.07B • Saf Refleks', en: '1.07B • Pure Reflex' },
+        label: { tr: 'AKTİF OTONOM DÜĞÜMLER', en: 'ACTIVE AUTONOMOUS NODES' },
+        basePop: 1073741824,
+        ratePerSec: 9.1,
+        speedMult: 1.08,
+        accent: '#ffb300',
+        accentDim: 'rgba(255, 179, 0, 0.12)',
+        cities: [
+          { name: 'Node-01 Zurich', x: 0.51, y: 0.31, w: 15 },
+          { name: 'Node-04 Singapore', x: 0.76, y: 0.57, w: 18 },
+          { name: 'Node-07 Silicon', x: 0.21, y: 0.38, w: 16 },
+          { name: 'Node-09 Busan', x: 0.83, y: 0.37, w: 14 }
+        ]
+      }
+    ];
+
+    let selectedArena = ARENAS[0];
+    let selectedMode = 'elim';
+    let shieldArmed = false;
+
+    const EPOCH_REF = Date.UTC(2026, 10, 1, 0, 0, 0);
+    function getLivePopulation(arena = selectedArena) {
+      const elapsedSec = Math.max(0, (Date.now() - EPOCH_REF) / 1000);
+      return Math.floor(arena.basePop + elapsedSec * arena.ratePerSec);
+    }
+
+    function formatNum(n) {
+      return Math.floor(n).toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US');
+    }
+
+    /* =========================================================
+       4. DOT-MATRIX TACTICAL MAP CANVAS
+    ========================================================= */
+    const worldCanvas = document.getElementById('worldCanvas');
+    const wCtx = worldCanvas.getContext('2d');
+    let mapPulses = [];
+
+    const CONTINENT_ROWS = [
+      "00000000000000000000000000000000000000000000",
+      "00000011111000000011100000000000000000000000",
+      "00001111111110000111100011111111111100000000",
+      "00011111111111000011001111111111111111100000",
+      "00001111111110000000011111111111111111110000",
+      "00000111111100000000011111111111111111100000",
+      "00000011111000000000001111111111111111000000",
+      "00000001110000000000011111111111111110000000",
+      "00000000110000000000111111110111111000000000",
+      "00000000011100000001111111100011110000000000",
+      "00000000001111100001111111000001101100000000",
+      "00000000001111110001111111000000001110000000",
+      "00000000000111111000111110000000000000000000",
+      "00000000000111110000011110000000001111000000",
+      "00000000000011110000011100000000011111100000",
+      "00000000000011100000001100000000011111100000",
+      "00000000000011000000000000000000000110000000",
+      "00000000000010000000000000000000000000000000",
+      "00000000000000000000000000000000000000000000",
+      "00000000000000000000000000000000000000000000"
+    ];
+
+    function spawnBirthPulse() {
+      const list = selectedArena.cities;
+      const totalW = list.reduce((s, c) => s + c.w, 0);
+      let r = Math.random() * totalW;
+      let chosen = list[0];
+      for (const c of list) {
+        r -= c.w;
+        if (r <= 0) { chosen = c; break; }
+      }
+      mapPulses.push({
+        x: chosen.x + (Math.random() - 0.5) * 0.03,
+        y: chosen.y + (Math.random() - 0.5) * 0.03,
+        r: 2,
+        alpha: 1
+      });
+      const ticker = document.getElementById('birthTicker');
+      const label = lang === 'tr' ? `+1 Yeni Yaşam • ${chosen.name}` : `+1 New Life • ${chosen.name}`;
+      ticker.textContent = label;
+      ticker.classList.remove('birth-pulse');
+      void ticker.offsetWidth;
+      ticker.classList.add('birth-pulse');
+    }
+
+    function drawMapLoop() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = worldCanvas.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        if (worldCanvas.width !== Math.floor(rect.width * dpr)) {
+          worldCanvas.width = Math.floor(rect.width * dpr);
+          worldCanvas.height = Math.floor(rect.height * dpr);
+        }
+        const W = worldCanvas.width;
+        const H = worldCanvas.height;
+        wCtx.clearRect(0, 0, W, H);
+
+        // Subtle tactical grid lines
+        wCtx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        wCtx.lineWidth = 1;
+        for (let gx = 1; gx < 6; gx++) {
+          wCtx.beginPath(); wCtx.moveTo((W / 6) * gx, 0); wCtx.lineTo((W / 6) * gx, H); wCtx.stroke();
+        }
+        for (let gy = 1; gy < 3; gy++) {
+          wCtx.beginPath(); wCtx.moveTo(0, (H / 3) * gy); wCtx.lineTo(W, (H / 3) * gy); wCtx.stroke();
+        }
+
+        const cols = 44, rows = 20;
+        const stepX = W / cols;
+        const stepY = H / rows;
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            let active = false;
+            if (selectedArena.id === 'earth') {
+              active = CONTINENT_ROWS[r][c] === '1';
+            } else if (selectedArena.id === 'mars') {
+              const dx = (c - 22) / 16, dy = (r - 10) / 8;
+              active = (dx * dx + dy * dy) <= 1.0 && ((r + c) % 2 === 0 || (dx * dx + dy * dy) < 0.65);
+            } else if (selectedArena.id === 'andromeda') {
+              const dx = (c - 22) / 19, dy = (r - 10) / 8;
+              const angle = Math.atan2(dy, dx) + Math.hypot(dx, dy) * 3.2;
+              active = Math.hypot(dx, dy) < 1 && Math.sin(angle * 2) > 0.15;
+            } else {
+              active = (r % 2 === 1 && c % 2 === 1) || (r === 10 && c % 2 === 0);
+            }
+
+            if (active) {
+              wCtx.fillStyle = 'rgba(139, 148, 165, 0.28)';
+              wCtx.fillRect(c * stepX + stepX / 2 - 1.2 * dpr, r * stepY + stepY / 2 - 1.2 * dpr, 2.4 * dpr, 2.4 * dpr);
+            }
+          }
+        }
+
+        for (let i = mapPulses.length - 1; i >= 0; i--) {
+          const p = mapPulses[i];
+          wCtx.strokeStyle = selectedArena.accent;
+          wCtx.globalAlpha = p.alpha;
+          wCtx.lineWidth = 1.5 * dpr;
+          wCtx.beginPath();
+          wCtx.arc(p.x * W, p.y * H, p.r * dpr, 0, Math.PI * 2);
+          wCtx.stroke();
+
+          wCtx.fillStyle = '#fff';
+          wCtx.fillRect(p.x * W - 1.5 * dpr, p.y * H - 1.5 * dpr, 3 * dpr, 3 * dpr);
+
+          p.r += 0.45;
+          p.alpha -= 0.024;
+          if (p.alpha <= 0) mapPulses.splice(i, 1);
+        }
+        wCtx.globalAlpha = 1;
+      }
+      requestAnimationFrame(drawMapLoop);
+    }
+
+    /* =========================================================
+       5. SEEDED RNG & MESSAGES
+    ========================================================= */
+    function createSeededRng(seedNum) {
+      let s = (seedNum % 2147483647) || 123456789;
+      return function() {
+        s = (s * 16807) % 2147483647;
+        return (s - 1) / 2147483646;
+      };
+    }
+
+    const INTER_MESSAGES_TR = [
+      "Ellerin şu an hayatta kalan {n} insandan daha hızlıymış!",
+      "Milyarlarca kişi tereddüt etti, sen saliseler içinde hayatta kaldın.",
+      "Dünyanın yarısı daha elendi. Nabzın hızlanıyor mu?",
+      "Bu turda {n} rakibin arasına adını altın harflerle yazdırdın.",
+      "Reflekslerin insan ortalamasının çok üzerinde çalışıyor.",
+      "Bir saniyelik panik bile sonun olabilirdi, soğukkanlı kaldın.",
+      "Şu an yeryüzündeki insanların %99'undan daha iyi durumdasın.",
+      "Göz kırpsaydın elenmiştin. Odaklanmaya devam et!",
+      "Kalan {n} kişi arasında hata payı artık giderek daralıyor.",
+      "Beynin baskı altında kusursuz karar verdi.",
+      "Rakiplerin tek tek dökülürken sen hala ayaktasın.",
+      "Bu hızla gidersen tarih yazacaksın. Derin nefes al!",
+      "Son 1'e giden yolda en kritik virajlardan birini döndün.",
+      "Parmakların adeta bir cerrah hassasiyetinde çalıştı.",
+      "Dünya nüfusunun devasa bir kısmını az önce eledin.",
+      "Terlemeye başladın mı? Asıl gerilim şimdi başlıyor!",
+      "İstatistikler eleneceğini söylüyordu, sen hepsini yanılttın.",
+      "Kalan {n} hayatta kalanın gözü şimdi senin üzerinde.",
+      "Hata yapanların elendiği bu arenada sen hala kusursuzsun.",
+      "Zaman daralıyor, sinirlerin çelik gibi olmalı!",
+      "Bir tur daha hayatta kaldın. Zirveye adım adım yaklaşıyorsun.",
+      "Sadece en keskin zihinler bu tempoya dayanabilir!"
+    ];
+
+    const INTER_MESSAGES_EN = [
+      "Your hands were faster than {n} survivors still in the game!",
+      "Billions hesitated, yet you survived in split seconds.",
+      "Half the remaining world just vanished. Feel your pulse?",
+      "You carved your spot among the remaining {n} contenders.",
+      "Your reflexes are firing way above human average.",
+      "A single millisecond of panic would have ended you.",
+      "You are currently outlasting 99% of humanity.",
+      "Blink and you're gone. Keep your eyes locked!",
+      "Among {n} survivors, the margin for error is shrinking fast.",
+      "Your brain made a flawless call under extreme pressure.",
+      "Rivals are dropping everywhere, yet you still stand.",
+      "Keep this tempo and you'll make history. Stay sharp!",
+      "Another deadly hurdle cleared on the road to #1.",
+      "Surgeon-level precision on that last move.",
+      "You just wiped out half the remaining population.",
+      "Hands sweating yet? The real tension starts right now!",
+      "The odds bet against you—you proved them wrong.",
+      "All {n} remaining survivors are watching your next move.",
+      "Zero room for error, and you are still spotless.",
+      "The clock is accelerating. Keep nerves of steel!",
+      "One step closer to being the last one standing.",
+      "Only the sharpest minds survive this pace!"
+    ];
+
+    /* =========================================================
+       6. 10 MICRO-GAMES
+    ========================================================= */
+    const MICRO_GAMES = [
+      {
+        id: 'blind_clock',
+        name: { tr: 'Kör Kronometre', en: 'Blind Clock' },
+        setup(ctx) {
+          const targets = [2.5, 3.0, 3.5, 4.0, 4.5];
+          const target = targets[Math.floor(ctx.rng() * targets.length)];
+          const hideAt = +(0.9 + ctx.rng() * 0.6).toFixed(2);
+          const tol = Math.max(0.22, 0.44 / ctx.speed);
+          ctx.setDuration(target + 1.8);
+          ctx.setPrompt(
+            lang === 'tr' ? `Tam ${target.toFixed(2)} sn'de DURDUR!` : `STOP at exactly ${target.toFixed(2)}s!`,
+            lang === 'tr' ? `Sayaç ${hideAt} sn'de gizlenecek (±${tol.toFixed(2)}s)` : `Clock hides at ${hideAt}s (±${tol.toFixed(2)}s)`
+          );
+          const readout = document.createElement('div');
+          readout.className = 'clock-readout';
+          readout.textContent = '0.00';
+
+          const btn = document.createElement('button');
+          btn.className = 'big-action-btn';
+          btn.textContent = lang === 'tr' ? 'DURDUR!' : 'STOP!';
+
+          const startT = performance.now();
+          let stopped = false;
+
+          const tick = () => {
+            if (stopped || !ctx.isActive()) return;
+            const el = (performance.now() - startT) / 1000;
+            if (el >= hideAt) {
+              readout.textContent = '?.??';
+              readout.style.color = 'var(--warning)';
+            } else {
+              readout.textContent = el.toFixed(2);
+            }
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+
+          btn.onclick = () => {
+            if (stopped || !ctx.canInput()) return;
+            stopped = true;
+            const el = (performance.now() - startT) / 1000;
+            readout.textContent = el.toFixed(2);
+            const diff = Math.abs(el - target);
+            if (diff <= tol) ctx.win();
+            else ctx.fail(lang === 'tr' ? `Hedef ${target.toFixed(2)}s idi, sen ${el.toFixed(2)}s yaptın!` : `Target was ${target.toFixed(2)}s, you hit ${el.toFixed(2)}s!`);
+          };
+
+          ctx.body.append(readout, btn);
+        }
+      },
+      {
+        id: 'bomb_defuse',
+        name: { tr: 'Bomba İmha', en: 'Bomb Defuse' },
+        setup(ctx) {
+          const startVal = +(1.6 + ctx.rng() * 0.9).toFixed(2);
+          const maxWindow = Math.max(0.22, +(0.36 / ctx.speed).toFixed(2));
+          ctx.setDuration(startVal + 0.35);
+          ctx.setPrompt(
+            lang === 'tr' ? `0.01 ile ${maxWindow.toFixed(2)} sn arasında KES!` : `CUT between 0.01s and ${maxWindow.toFixed(2)}s!`,
+            lang === 'tr' ? '0.00 olursa bomba patlar!' : 'Hits 0.00 and it blows!'
+          );
+          const readout = document.createElement('div');
+          readout.className = 'clock-readout';
+          readout.style.color = 'var(--danger)';
+
+          const btn = document.createElement('button');
+          btn.className = 'big-action-btn';
+          btn.style.borderColor = 'var(--danger)';
+          btn.textContent = lang === 'tr' ? 'KABLOYU KES!' : 'CUT WIRE!';
+
+          const startT = performance.now();
+          let done = false;
+
+          const tick = () => {
+            if (done || !ctx.isActive()) return;
+            const rem = startVal - (performance.now() - startT) / 1000;
+            if (rem <= 0) {
+              done = true;
+              readout.textContent = '0.00';
+              ctx.fail(lang === 'tr' ? 'Bomba patladı! Çok geç kaldın.' : 'Bomb detonated! Too late.');
+              return;
+            }
+            readout.textContent = rem.toFixed(2);
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+
+          btn.onclick = () => {
+            if (done || !ctx.canInput()) return;
+            done = true;
+            const rem = Math.max(0, startVal - (performance.now() - startT) / 1000);
+            readout.textContent = rem.toFixed(2);
+            if (rem > 0 && rem <= maxWindow) ctx.win();
+            else ctx.fail(lang === 'tr' ? `Çok erken kestin (${rem.toFixed(2)}s)!` : `Cut too early (${rem.toFixed(2)}s)!`);
+          };
+          ctx.body.append(readout, btn);
+        }
+      },
+      {
+        id: 'tap_rush',
+        name: { tr: 'Seri Dokunuş', en: 'Tap Rush' },
+        setup(ctx) {
+          const targetTaps = Math.min(20, Math.round(7 + ctx.round * 0.45));
+          let taps = 0;
+          ctx.setDuration(2.4);
+          ctx.setPrompt(
+            lang === 'tr' ? `2.4 saniyede ${targetTaps} KEZ DOKUN!` : `TAP ${targetTaps} TIMES in 2.4s!`,
+            lang === 'tr' ? 'Durma, barı doldur!' : 'Fill the bar before time runs out!'
+          );
+
+          const counter = document.createElement('div');
+          counter.className = 'clock-readout';
+          counter.textContent = `0 / ${targetTaps}`;
+
+          const btn = document.createElement('button');
+          btn.className = 'big-action-btn';
+          btn.textContent = lang === 'tr' ? 'DOKUN! ⚡' : 'TAP! ⚡';
+
+          btn.onclick = () => {
+            if (!ctx.canInput()) return;
+            taps++;
+            playTone(300 + taps * 22, 'sine', 0.05, 0.06);
+            counter.textContent = `${taps} / ${targetTaps}`;
+            if (taps >= targetTaps) ctx.win();
+          };
+
+          ctx.body.append(counter, btn);
+        }
+      },
+      {
+        id: 'stroop',
+        name: { tr: 'Sahte Renk', en: 'Fake Color' },
+        setup(ctx) {
+          ctx.setDuration(Math.max(1.85, 2.7 / ctx.speed));
+          const colors = [
+            { id: 'red', tr: 'KIRMIZI', en: 'RED', hex: '#ff3b3b' },
+            { id: 'blue', tr: 'MAVİ', en: 'BLUE', hex: '#3b82f6' },
+            { id: 'green', tr: 'YEŞİL', en: 'GREEN', hex: '#00e676' },
+            { id: 'yellow', tr: 'SARI', en: 'YELLOW', hex: '#ffb300' }
+          ];
+          const wordObj = colors[Math.floor(ctx.rng() * colors.length)];
+          let inkObj = colors[Math.floor(ctx.rng() * colors.length)];
+          if (inkObj.id === wordObj.id) inkObj = colors[(colors.indexOf(wordObj) + 1) % colors.length];
+
+          const askInk = ctx.rng() > 0.4;
+          ctx.setPrompt(
+            askInk ? (lang === 'tr' ? 'YAZININ RENGİNE BAS!' : 'TAP THE INK COLOR!') : (lang === 'tr' ? 'YAZAN KELİMEYE BAS!' : 'TAP THE WRITTEN WORD!'),
+            ''
+          );
+
+          const bigWord = document.createElement('div');
+          bigWord.style.fontSize = '36px';
+          bigWord.style.fontWeight = '900';
+          bigWord.style.color = inkObj.hex;
+          bigWord.textContent = wordObj[lang];
+
+          const grid = document.createElement('div');
+          grid.className = 'choice-grid-2';
+          const correctId = askInk ? inkObj.id : wordObj.id;
+
+          colors.forEach(c => {
+            const b = document.createElement('button');
+            b.className = 'choice-card';
+            b.textContent = c[lang];
+            b.onclick = () => {
+              if (!ctx.canInput()) return;
+              if (c.id === correctId) ctx.win();
+              else ctx.fail(lang === 'tr' ? 'Yanlış renge/kelimeye bastın!' : 'Wrong color/word!');
+            };
+            grid.appendChild(b);
+          });
+
+          ctx.body.append(bigWord, grid);
+        }
+      },
+      {
+        id: 'odd_one',
+        name: { tr: 'Farklı Olanı Bul', en: 'Odd One Out' },
+        setup(ctx) {
+          ctx.setDuration(Math.max(1.9, 2.8 / ctx.speed));
+          const pairs = [['8', 'B'], ['0', 'Q'], ['M', 'N'], ['5', 'S'], ['E', 'F'], ['V', 'W']];
+          const pair = pairs[Math.floor(ctx.rng() * pairs.length)];
+          const oddIdx = Math.floor(ctx.rng() * 16);
+
+          ctx.setPrompt(lang === 'tr' ? `Farklı olan "${pair[1]}" karakterini bul!` : `Find the odd "${pair[1]}"!`, '');
+
+          const grid = document.createElement('div');
+          grid.className = 'grid-4x4';
+          for (let i = 0; i < 16; i++) {
+            const cell = document.createElement('button');
+            cell.className = 'cell-btn';
+            cell.textContent = i === oddIdx ? pair[1] : pair[0];
+            cell.onclick = () => {
+              if (!ctx.canInput()) return;
+              if (i === oddIdx) ctx.win();
+              else ctx.fail(lang === 'tr' ? 'Yanlış karaktere dokundun!' : 'Tapped wrong character!');
+            };
+            grid.appendChild(cell);
+          }
+          ctx.body.appendChild(grid);
+        }
+      },
+      {
+        id: 'flash_mem',
+        name: { tr: 'Anlık Hafıza', en: 'Flash Memory' },
+        setup(ctx) {
+          const count = ctx.round > 14 ? 4 : 3;
+          ctx.setDuration(Math.max(2.3, 3.2 / ctx.speed));
+          ctx.setPrompt(
+            lang === 'tr' ? `Parlayan ${count} kutuyu aklında tut!` : `Memorize the ${count} lit tiles!`,
+            lang === 'tr' ? 'Söndükten sonra dokun' : 'Tap them after they fade'
+          );
+
+          const chosen = new Set();
+          while (chosen.size < count) chosen.add(Math.floor(ctx.rng() * 9));
+
+          let locked = true;
+          const picked = new Set();
+          const grid = document.createElement('div');
+          grid.className = 'grid-3x3';
+          const cells = [];
+
+          for (let i = 0; i < 9; i++) {
+            const c = document.createElement('div');
+            c.className = 'mem-cell' + (chosen.has(i) ? ' lit' : '');
+            c.onclick = () => {
+              if (locked || !ctx.canInput() || picked.has(i)) return;
+              if (!chosen.has(i)) {
+                c.style.background = 'var(--danger)';
+                ctx.fail(lang === 'tr' ? 'Yanlış kutuya bastın!' : 'Wrong tile!');
+                return;
+              }
+              picked.add(i);
+              c.classList.add('lit');
+              playTone(620 + picked.size * 90, 'sine', 0.08, 0.08);
+              if (picked.size === chosen.size) ctx.win();
+            };
+            cells.push(c);
+            grid.appendChild(c);
+          }
+
+          setTimeout(() => {
+            if (!ctx.isActive()) return;
+            cells.forEach(c => c.classList.remove('lit'));
+            locked = false;
+          }, 620);
+
+          ctx.body.appendChild(grid);
+        }
+      },
+      {
+        id: 'reflex_needle',
+        name: { tr: 'Saliselik İbre', en: 'Precision Needle' },
+        setup(ctx) {
+          ctx.setDuration(Math.max(1.9, 2.7 / ctx.speed));
+          const zoneStart = 25 + Math.floor(ctx.rng() * 45);
+          const zoneWidth = Math.max(13, Math.round(24 / ctx.speed));
+          const zoneEnd = zoneStart + zoneWidth;
+
+          ctx.setPrompt(lang === 'tr' ? 'İbre YEŞİL bölgedeyken DURDUR!' : 'STOP inside the GREEN zone!', '');
+
+          const track = document.createElement('div');
+          track.style.cssText = 'width:100%;height:30px;background:#06070a;border-radius:6px;position:relative;overflow:hidden;border:1px solid var(--border-strong);';
+
+          const zone = document.createElement('div');
+          zone.style.cssText = `position:absolute;top:0;bottom:0;left:${zoneStart}%;width:${zoneWidth}%;background:rgba(0,230,118,0.32);border-left:2px solid #00e676;border-right:2px solid #00e676;`;
+
+          const needle = document.createElement('div');
+          needle.style.cssText = 'position:absolute;top:0;bottom:0;width:3px;background:#fff;left:0%;';
+
+          track.append(zone, needle);
+
+          const btn = document.createElement('button');
+          btn.className = 'big-action-btn';
+          btn.textContent = lang === 'tr' ? 'ŞİMDİ BAS!' : 'HIT NOW!';
+
+          let pos = 0, dir = 1, stopped = false;
+          const stepSpeed = 1.65 * ctx.speed;
+
+          const anim = () => {
+            if (stopped || !ctx.isActive()) return;
+            pos += dir * stepSpeed;
+            if (pos >= 98) { pos = 98; dir = -1; }
+            if (pos <= 0) { pos = 0; dir = 1; }
+            needle.style.left = pos + '%';
+            requestAnimationFrame(anim);
+          };
+          requestAnimationFrame(anim);
+
+          btn.onclick = () => {
+            if (stopped || !ctx.canInput()) return;
+            stopped = true;
+            if (pos >= zoneStart - 1.5 && pos <= zoneEnd + 1.5) ctx.win();
+            else ctx.fail(lang === 'tr' ? 'Yeşil bölgeyi kaçırdın!' : 'Missed green zone!');
+          };
+
+          ctx.body.append(track, btn);
+        }
+      },
+      {
+        id: 'number_hunt',
+        name: { tr: 'Sayı Avı', en: 'Number Hunt' },
+        setup(ctx) {
+          ctx.setDuration(Math.max(1.85, 2.6 / ctx.speed));
+          const nums = new Set();
+          while (nums.size < 4) nums.add(10 + Math.floor(ctx.rng() * 89));
+          const arr = Array.from(nums);
+          const pickMax = ctx.rng() > 0.5;
+          const target = pickMax ? Math.max(...arr) : Math.min(...arr);
+
+          ctx.setPrompt(pickMax ? (lang === 'tr' ? 'EN BÜYÜK SAYIYA BAS!' : 'LARGEST!') : (lang === 'tr' ? 'EN KÜÇÜK SAYIYA BAS!' : 'SMALLEST!'), '');
+
+          const grid = document.createElement('div');
+          grid.className = 'choice-grid-2';
+          arr.forEach(n => {
+            const b = document.createElement('button');
+            b.className = 'choice-card';
+            b.style.fontFamily = 'var(--mono)';
+            b.style.fontSize = '22px';
+            b.textContent = n;
+            b.onclick = () => {
+              if (!ctx.canInput()) return;
+              if (n === target) ctx.win();
+              else ctx.fail(lang === 'tr' ? `Doğru cevap ${target} idi!` : `Correct was ${target}!`);
+            };
+            grid.appendChild(b);
+          });
+          ctx.body.appendChild(grid);
+        }
+      },
+      {
+        id: 'reverse_cmd',
+        name: { tr: 'Ters Kural', en: 'Reverse Rule' },
+        setup(ctx) {
+          ctx.setDuration(Math.max(1.9, 2.7 / ctx.speed));
+          const reversed = ctx.rng() > 0.45;
+          const askRed = ctx.rng() > 0.5;
+          const targetColor = reversed ? (askRed ? 'blue' : 'red') : (askRed ? 'red' : 'blue');
+
+          ctx.setPrompt(askRed ? (lang === 'tr' ? 'KIRMIZIYA BAS!' : 'RED!') : (lang === 'tr' ? 'MAVİYE BAS!' : 'BLUE!'), reversed ? '⚠️ TERS KURAL AKTİF!' : '');
+
+          const grid = document.createElement('div');
+          grid.className = 'choice-grid-2';
+
+          [
+            { id: 'red', label: lang === 'tr' ? 'KIRMIZI' : 'RED', bg: '#d32f2f' },
+            { id: 'blue', label: lang === 'tr' ? 'MAVİ' : 'BLUE', bg: '#1976d2' }
+          ].forEach(opt => {
+            const b = document.createElement('button');
+            b.className = 'choice-card';
+            b.style.background = opt.bg;
+            b.style.borderColor = 'rgba(255,255,255,0.2)';
+            b.style.padding = '22px 10px';
+            b.textContent = opt.label;
+            b.onclick = () => {
+              if (!ctx.canInput()) return;
+              if (opt.id === targetColor) ctx.win();
+              else ctx.fail(lang === 'tr' ? 'Ters kural tuzağına düştün!' : 'Wrong rule!');
+            };
+            grid.appendChild(b);
+          });
+
+          ctx.body.appendChild(grid);
+        }
+      },
+      {
+        id: 'psych_door',
+        name: { tr: 'Psikolojik Kapı', en: 'Psych Door' },
+        setup(ctx) {
+          ctx.setDuration(Math.max(2.1, 3.0 / ctx.speed));
+          const safeLeft = ctx.rng() > 0.5;
+          const fakePct = 68 + Math.floor(ctx.rng() * 21);
+
+          ctx.setPrompt(lang === 'tr' ? 'Hayatta kalmak için bir kapı seç!' : 'Choose a door to survive!', '');
+
+          const grid = document.createElement('div');
+          grid.className = 'choice-grid-2';
+
+          const leftBtn = document.createElement('button');
+          leftBtn.className = 'choice-card';
+          leftBtn.innerHTML = `🚪 SOL<div style="font-size:10px;font-family:var(--mono);color:#8b94a5;margin-top:4px;">%${fakePct} geçti</div>`;
+
+          const rightBtn = document.createElement('button');
+          rightBtn.className = 'choice-card';
+          rightBtn.innerHTML = `🚪 SAĞ<div style="font-size:10px;font-family:var(--mono);color:#8b94a5;margin-top:4px;">Riskli geçit</div>`;
+
+          leftBtn.onclick = () => { if (ctx.canInput()) safeLeft ? ctx.win() : ctx.fail(); };
+          rightBtn.onclick = () => { if (ctx.canInput()) !safeLeft ? ctx.win() : ctx.fail(); };
+
+          grid.append(leftBtn, rightBtn);
+          ctx.body.appendChild(grid);
+        }
+      }
+    ];
+
+    /* =========================================================
+       7. GAME ENGINE & STATE MACHINE
+    ========================================================= */
+    let gameState = {
+      active: false,
+      practiceMode: false,
+      practiceGameId: null,
+      round: 1,
+      lockedPop: 8245671890,
+      survivors: 8245671890,
+      seed: 123456,
+      rng: Math.random,
+      reviveUsed: false,
+      hasShield: false,
+      timerId: null,
+      timerRaf: null,
+      roundStartTime: 0,
+      roundDuration: 2.5,
+      inputAllowedAt: 0,
+      inIntermission: false
+    };
+
+    function getRecords() {
+      try { return JSON.parse(localStorage.getItem('1in8b_records') || '{}'); } catch { return {}; }
+    }
+
+    function saveRecord(key, val, lowerIsBetter = false) {
+      const rec = getRecords();
+      if (rec[key] === undefined) rec[key] = val;
+      else rec[key] = lowerIsBetter ? Math.min(rec[key], val) : Math.max(rec[key], val);
+      localStorage.setItem('1in8b_records', JSON.stringify(rec));
+    }
+
+    function stopTimers() {
+      if (gameState.timerId) clearTimeout(gameState.timerId);
+      if (gameState.timerRaf) cancelAnimationFrame(gameState.timerRaf);
+      gameState.timerId = null;
+      gameState.timerRaf = null;
+    }
+
+    function startNewRun(practiceGameId = null) {
+      ensureAudio();
+      stopTimers();
+
+      const rawPop = getLivePopulation(selectedArena);
+      const urlSeed = parseInt(new URLSearchParams(window.location.search).get('seed'), 10);
+      const runSeed = (!practiceGameId && !isNaN(urlSeed)) ? urlSeed : rawPop;
+
+      gameState = {
+        active: true,
+        practiceMode: Boolean(practiceGameId),
+        practiceGameId,
+        round: 1,
+        lockedPop: runSeed,
+        survivors: runSeed,
+        seed: runSeed,
+        rng: createSeededRng(runSeed),
+        reviveUsed: false,
+        hasShield: !practiceGameId && shieldArmed,
+        timerId: null,
+        timerRaf: null,
+        roundStartTime: 0,
+        roundDuration: 2.5,
+        inputAllowedAt: 0,
+        inIntermission: false
+      };
+
+      if (!practiceGameId) {
+        shieldArmed = false;
+        updateShieldUI();
+        sfxLock();
+      }
+
+      document.getElementById('homeView').classList.add('hidden');
+      document.getElementById('resultModal').classList.add('hidden');
+      document.getElementById('intermissionOverlay').classList.add('hidden');
+      document.getElementById('gameView').classList.remove('hidden');
+
+      launchRound();
+    }
+
+    function launchRound() {
+      if (!gameState.active) return;
+      stopTimers();
+      gameState.inIntermission = false;
+
+      if (!gameState.practiceMode && gameState.survivors <= 1024) {
+        document.body.classList.add('tension-red');
+        sfxHeartbeat();
+      } else {
+        document.body.classList.remove('tension-red');
+      }
+
+      const hudRound = document.getElementById('hudRound');
+      const hudSurv = document.getElementById('hudSurvivors');
+      const hudBadges = document.getElementById('hudBadges');
+
+      if (gameState.practiceMode) {
+        hudRound.textContent = lang === 'tr' ? `ANTRENMAN • SERİ: ${gameState.round - 1}` : `DRILL • ${gameState.round - 1}`;
+        hudSurv.textContent = selectedArena.name[lang];
+      } else if (selectedMode === 'elim') {
+        hudRound.textContent = lang === 'tr' ? `TUR ${gameState.round} / 33` : `ROUND ${gameState.round} / 33`;
+        hudSurv.textContent = formatNum(gameState.survivors);
+      } else {
+        hudRound.textContent = lang === 'tr' ? `SONSUZ • TUR ${gameState.round}` : `ENDLESS • ${gameState.round}`;
+        hudSurv.textContent = formatNum(gameState.survivors);
+      }
+
+      hudBadges.textContent = gameState.hasShield ? '🛡️' : '';
+
+      const baseSpeed = Math.min(1.65, 0.92 + (gameState.round - 1) * 0.032);
+      const speed = baseSpeed * selectedArena.speedMult;
+
+      let mg;
+      if (gameState.practiceMode) mg = MICRO_GAMES.find(g => g.id === gameState.practiceGameId) || MICRO_GAMES[0];
+      else mg = MICRO_GAMES[Math.floor(gameState.rng() * MICRO_GAMES.length)];
+
+      const mgSub = document.getElementById('mgSub');
+      mgSub.style.color = 'var(--muted)';
+
+      const mgBody = document.getElementById('mgBody');
+      mgBody.innerHTML = '';
+
+      gameState.inputAllowedAt = performance.now() + 110;
+      let roundResolved = false;
+
+      const ctx = {
+        round: gameState.round,
+        speed,
+        rng: gameState.rng,
+        body: mgBody,
+        isActive: () => gameState.active && !roundResolved && !gameState.inIntermission,
+        canInput: () => gameState.active && !roundResolved && !gameState.inIntermission && performance.now() >= gameState.inputAllowedAt,
+        setPrompt(title, sub = '') {
+          document.getElementById('mgPrompt').textContent = title;
+          mgSub.textContent = sub;
+        },
+        setDuration(sec) { gameState.roundDuration = sec; },
+        win() {
+          if (roundResolved || !gameState.active) return;
+          roundResolved = true;
+          stopTimers();
+          handleRoundWin();
+        },
+        fail(reason = '') {
+          if (roundResolved || !gameState.active) return;
+          roundResolved = true;
+          stopTimers();
+          handleRoundFail(reason);
+        }
+      };
+
+      mg.setup(ctx);
+
+      gameState.roundStartTime = performance.now();
+      const fill = document.getElementById('timerFill');
+      fill.style.backgroundColor = selectedArena.accent;
+
+      const tickBar = () => {
+        if (roundResolved || !gameState.active) return;
+        const elapsed = (performance.now() - gameState.roundStartTime) / 1000;
+        const pct = Math.max(0, 1 - elapsed / gameState.roundDuration);
+        fill.style.width = (pct * 100) + '%';
+        if (pct < 0.28) fill.style.backgroundColor = 'var(--danger)';
+
+        if (pct <= 0) {
+          roundResolved = true;
+          handleRoundFail(lang === 'tr' ? 'Süre doldu!' : 'Time ran out!');
+          return;
+        }
+        gameState.timerRaf = requestAnimationFrame(tickBar);
+      };
+      gameState.timerRaf = requestAnimationFrame(tickBar);
+
+      const rivals = ['Kenji (🇯🇵)', 'Lukas (🇩🇪)', 'Sofia (🇪🇸)', 'Mateus (🇧🇷)', 'Aarav (🇮🇳)', 'Chloe (🇺🇸)', 'Emre (🇹🇷)'];
+      document.getElementById('elimFeed').textContent = `⚡ ${rivals[Math.floor(Math.random() * rivals.length)]} elendi`;
+    }
+
+    function handleRoundWin() {
+      sfxWin();
+      gameState.inIntermission = true;
+
+      if (gameState.practiceMode) {
+        saveRecord('prac_' + gameState.practiceGameId, gameState.round);
+        renderPracticeGrid();
+        gameState.round++;
+        showIntermission(t('practiceDone'), `${gameState.round - 1}x`, '');
+        return;
+      }
+
+      const prevSurv = gameState.survivors;
+      const nextSurv = selectedMode === 'elim' ? Math.max(1, Math.floor(prevSurv / 2)) : Math.max(1, Math.floor(prevSurv * 0.72));
+      gameState.survivors = nextSurv;
+
+      if (selectedMode === 'elim' && (nextSurv === 1 || gameState.round >= 33)) {
+        finishRun(true, lang === 'tr' ? 'Tüm insanlığı geride bıraktın!' : 'Outlasted humanity!');
+        return;
+      }
+
+      gameState.round++;
+      const pool = lang === 'tr' ? INTER_MESSAGES_TR : INTER_MESSAGES_EN;
+      const rawMsg = pool[Math.floor(Math.random() * pool.length)];
+      showIntermission(t('roundPassed'), formatNum(nextSurv), rawMsg.replace('{n}', formatNum(nextSurv)), prevSurv, nextSurv);
+    }
+
+    function showIntermission(badgeText, countText, msgText, fromNum = null, toNum = null) {
+      const overlay = document.getElementById('intermissionOverlay');
+      const countEl = document.getElementById('interCount');
+      document.getElementById('interBadge').textContent = badgeText;
+      document.getElementById('interMsg').textContent = msgText;
+      countEl.textContent = countText;
+      overlay.classList.remove('hidden');
+
+      if (fromNum && toNum && fromNum > toNum) {
+        const animStart = performance.now();
+        const step = () => {
+          const p = Math.min(1, (performance.now() - animStart) / 450);
+          countEl.textContent = formatNum(Math.floor(fromNum - (fromNum - toNum) * p));
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      }
+
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+        if (gameState.active) launchRound();
+      }, 750);
+    }
+
+    function handleRoundFail(reason) {
+      if (gameState.practiceMode) {
+        sfxFail();
+        gameState.round = 1;
+        showIntermission(lang === 'tr' ? 'TEKRAR DENE' : 'TRY AGAIN', '0', reason);
+        return;
+      }
+
+      if (gameState.hasShield) {
+        gameState.hasShield = false;
+        sfxWin();
+        gameState.inIntermission = true;
+        showIntermission(t('shieldSaved'), formatNum(gameState.survivors), lang === 'tr' ? 'Kalkan korudu!' : 'Shield saved!');
+        return;
+      }
+
+      sfxFail();
+      finishRun(false, reason);
+    }
+
+    function finishRun(isChampion, reason) {
+      gameState.active = false;
+      stopTimers();
+      document.body.classList.remove('tension-red');
+
+      const rank = isChampion ? 1 : gameState.survivors;
+      const beatenPct = (((gameState.lockedPop - rank) / gameState.lockedPop) * 100).toFixed(4);
+
+      if (selectedMode === 'elim') saveRecord('best_rank_' + selectedArena.id, rank, true);
+      else saveRecord('best_endless_' + selectedArena.id, gameState.round, false);
+
+      document.getElementById('resSubtitle').textContent = isChampion ? t('champion') : t('eliminated');
+      document.getElementById('resRank').textContent = selectedMode === 'elim' ? `#${formatNum(rank)}` : `TUR ${gameState.round}`;
+      document.getElementById('resReason').textContent = reason;
+
+      document.getElementById('resStats').innerHTML = `
+        <div class="res-row"><span>${t('lockedPop')}:</span><strong>${formatNum(gameState.lockedPop)}</strong></div>
+        <div class="res-row"><span>${t('reachedRound')}:</span><strong>${gameState.round}</strong></div>
+        <div class="res-row"><span>${t('beatenPct')}:</span><strong>%${beatenPct}</strong></div>
+      `;
+
+      const revBtn = document.getElementById('btnRevive');
+      if (!isChampion && !gameState.reviveUsed && gameState.round >= 3) revBtn.classList.remove('hidden');
+      else revBtn.classList.add('hidden');
+
+      document.getElementById('resultModal').classList.remove('hidden');
+    }
+
+    function triggerRewardedAd(onComplete) {
+      const modal = document.getElementById('adModal');
+      const cdEl = document.getElementById('adCountdown');
+      let sec = 3;
+      cdEl.textContent = sec;
+      modal.classList.remove('hidden');
+
+      const iv = setInterval(() => {
+        sec--;
+        if (sec <= 0) {
+          clearInterval(iv);
+          modal.classList.add('hidden');
+          onComplete();
+        } else cdEl.textContent = sec;
+      }, 1000);
+    }
+
+    function downloadStoryCard() {
+      const c = document.getElementById('storyCanvas');
+      const ctx = c.getContext('2d');
+      const W = 1080, H = 1920;
+
+      ctx.fillStyle = '#08090c';
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = selectedArena.accent;
+      ctx.lineWidth = 6;
+      ctx.strokeRect(48, 48, W - 96, H - 96);
+
+      ctx.fillStyle = selectedArena.accent;
+      ctx.font = 'bold 40px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(t('title').toUpperCase(), W / 2, 180);
+
+      ctx.fillStyle = '#8b94a5';
+      ctx.font = '30px monospace';
+      ctx.fillText(new Date().toLocaleString(), W / 2, 240);
+
+      const pName = (document.getElementById('playerNameInput').value.trim() || 'Player');
+      const flag = document.getElementById('flagSelect').value;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 54px sans-serif';
+      ctx.fillText(`${flag} ${pName}`, W / 2, 420);
+
+      ctx.fillStyle = '#8b94a5';
+      ctx.font = '34px monospace';
+      ctx.fillText(t('lockedPop').toUpperCase(), W / 2, 560);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 82px monospace';
+      ctx.fillText(formatNum(gameState.lockedPop), W / 2, 660);
+
+      ctx.fillStyle = selectedArena.accent;
+      ctx.font = '900 128px monospace';
+      ctx.fillText(selectedMode === 'elim' ? `#${formatNum(gameState.survivors)}` : `TUR ${gameState.round}`, W / 2, 960);
+
+      const beatenPct = (((gameState.lockedPop - gameState.survivors) / gameState.lockedPop) * 100).toFixed(3);
+      ctx.fillStyle = '#f3f4f6';
+      ctx.font = 'bold 42px sans-serif';
+      ctx.fillText(`%${beatenPct} insanlık geride kaldı`, W / 2, 1080);
+
+      const link = document.createElement('a');
+      link.download = `8milyarda1_${gameState.lockedPop}.png`;
+      link.href = c.toDataURL('image/png');
+      link.click();
+    }
+
+    /* =========================================================
+       8. UI RENDERING & LISTENERS
+    ========================================================= */
+    function renderArenas() {
+      const wrap = document.getElementById('arenaScroll');
+      wrap.innerHTML = '';
+      ARENAS.forEach(a => {
+        const div = document.createElement('div');
+        div.className = 'arena-pill' + (a.id === selectedArena.id ? ' active' : '');
+        div.innerHTML = `<div class="a-title">${a.icon} ${a.name[lang]}</div><div class="a-sub">${a.sub[lang]}</div>`;
+        div.onclick = () => {
+          selectedArena = a;
+          document.documentElement.style.setProperty('--accent', a.accent);
+          document.documentElement.style.setProperty('--accent-dim', a.accentDim);
+          document.getElementById('arenaPopLabel').textContent = a.label[lang];
+          document.getElementById('birthRateHint').textContent = `+${a.ratePerSec} / sn`;
+          renderArenas();
+        };
+        wrap.appendChild(div);
+      });
+    }
+
+    function renderPracticeGrid() {
+      const grid = document.getElementById('practiceGrid');
+      const rec = getRecords();
+      grid.innerHTML = '';
+      MICRO_GAMES.forEach(mg => {
+        const best = rec['prac_' + mg.id] || 0;
+        const card = document.createElement('button');
+        card.className = 'prac-card';
+        card.innerHTML = `<span class="prac-title">${mg.name[lang]}</span><span class="prac-best">${best}x</span>`;
+        card.onclick = () => startNewRun(mg.id);
+        grid.appendChild(card);
+      });
+    }
+
+    function updateShieldUI() {
+      const btn = document.getElementById('btnShield');
+      if (shieldArmed) {
+        btn.classList.add('armed');
+        btn.textContent = t('shieldOn');
+      } else {
+        btn.classList.remove('armed');
+        btn.textContent = '🛡️ ' + t('shieldOff');
+      }
+    }
+
+    function openLeaderboard() {
+      const rec = getRecords();
+      const pName = document.getElementById('playerNameInput').value.trim() || 'Sen';
+      const flag = document.getElementById('flagSelect').value;
+      const bestEarth = rec['best_rank_earth'] ? `#${formatNum(rec['best_rank_earth'])}` : '-';
+
+      document.getElementById('personalBestBox').innerHTML = `
+        <div class="res-row"><span>${flag} ${pName}:</span><strong>${bestEarth}</strong></div>
+      `;
+
+      const mockGlobal = [
+        { flag: '🇰🇷', name: 'Jihoon_KR', score: '#1 (33 Tur)' },
+        { flag: '🇹🇷', name: 'KaanTR', score: '#2 (32 Tur)' },
+        { flag: '🇺🇸', name: 'ApexTyler', score: '#4 (31 Tur)' },
+        { flag: flag, name: pName, score: bestEarth, isMe: true }
+      ];
+
+      document.getElementById('lbList').innerHTML = mockGlobal.map((item, idx) => `
+        <div class="lb-item ${item.isMe ? 'me' : ''}">
+          <span><strong>${idx + 1}.</strong> ${item.flag} ${item.name}</span>
+          <strong style="color:var(--accent);">${item.score}</strong>
+        </div>
+      `).join('');
+
+      document.getElementById('lbModal').classList.remove('hidden');
+    }
+
+    document.getElementById('btnLang').onclick = () => {
+      lang = lang === 'tr' ? 'en' : 'tr';
+      localStorage.setItem('1in8b_lang', lang);
+      applyLanguage();
+    };
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedMode = btn.getAttribute('data-mode');
+      };
+    });
+
+    document.getElementById('btnShield').onclick = () => {
+      if (shieldArmed) return;
+      triggerRewardedAd(() => {
+        shieldArmed = true;
+        updateShieldUI();
+      });
+    };
+
+    document.getElementById('btnStart').onclick = () => startNewRun(null);
+    document.getElementById('btnPlayAgain').onclick = () => startNewRun(null);
+
+    document.getElementById('btnQuitGame').onclick = () => {
+      gameState.active = false;
+      stopTimers();
+      document.body.classList.remove('tension-red');
+      document.getElementById('gameView').classList.add('hidden');
+      document.getElementById('homeView').classList.remove('hidden');
+    };
+
+    document.getElementById('btnHomeResult').onclick = () => {
+      document.getElementById('resultModal').classList.add('hidden');
+      document.getElementById('gameView').classList.add('hidden');
+      document.getElementById('homeView').classList.remove('hidden');
+    };
+
+    document.getElementById('btnRevive').onclick = () => {
+      triggerRewardedAd(() => {
+        gameState.reviveUsed = true;
+        gameState.active = true;
+        document.getElementById('resultModal').classList.add('hidden');
+        launchRound();
+      });
+    };
+
+    document.getElementById('btnDownloadCard').onclick = downloadStoryCard;
+    document.getElementById('btnChallenge').onclick = () => {
+      const url = `${window.location.origin}${window.location.pathname}?seed=${gameState.lockedPop}`;
+      if (navigator.clipboard) navigator.clipboard.writeText(url);
+      alert(t('copied'));
+    };
+
+    document.getElementById('btnLeaderboard').onclick = openLeaderboard;
+    document.getElementById('btnCloseLb').onclick = () => document.getElementById('lbModal').classList.add('hidden');
+
+    const savedName = localStorage.getItem('1in8b_name');
+    const savedFlag = localStorage.getItem('1in8b_flag');
+    if (savedName) document.getElementById('playerNameInput').value = savedName;
+    if (savedFlag) document.getElementById('flagSelect').value = savedFlag;
+
+    document.getElementById('playerNameInput').oninput = e => localStorage.setItem('1in8b_name', e.target.value);
+    document.getElementById('flagSelect').onchange = e => localStorage.setItem('1in8b_flag', e.target.value);
+
+    const initSeed = new URLSearchParams(window.location.search).get('seed');
+    if (initSeed) {
+      document.getElementById('seedBanner').classList.remove('hidden');
+      document.getElementById('seedText').textContent = `⚔️ Seed: ${formatNum(Number(initSeed))}`;
+      document.getElementById('btnClearSeed').onclick = () => {
+        window.history.replaceState({}, '', window.location.pathname);
+        document.getElementById('seedBanner').classList.add('hidden');
+      };
+    }
+
+    setInterval(() => {
+      document.getElementById('livePopDisplay').textContent = formatNum(getLivePopulation(selectedArena));
+    }, 220);
+
+    setInterval(() => {
+      if (!gameState.active) spawnBirthPulse();
+    }, 650);
+
+    applyLanguage();
+    spawnBirthPulse();
+    drawMapLoop();
+  </script>
+</body>
+</html>

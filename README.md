@@ -1,14 +1,12 @@
-# 🌍 8 Milyarda 1 (1 in 8 Billion)
+### Hi there, I'm Kurtuluş Taş 👋
 
-Canlı dünya nüfusu simülasyonu eşliğinde refleks, hafıza, zamanlama ve dikkat becerilerinizi test eden kurulumsuz tarayıcı tabanlı hayatta kalma oyunu.
+I build minimalist, zero-install browser games and interactive web applications.
 
-🎮 **Hemen Oyna:** [https://kurtulustas.github.io/8-milyarda-1/](https://kurtulustas.github.io/8-milyarda-1/)
+#### 🎮 Featured Project
+* **[1 in 8 Billion (8 Milyarda 1)](https://kurtulustas.github.io/8-milyarda-1/):** A live world-population survival game testing your reflexes, memory, and timing. ([Source Code](https://github.com/kurtulustas/8-milyarda-1))
 
-## ✨ Özellikler
-* **Sıfır Kurulum (Zero-Install):** Harici hiçbir kütüphane kullanılmadan saf HTML, CSS ve JavaScript (Vanilla JS) ile kodlanmıştır. Mobil ve masaüstü tarayıcılarda anında açılır.
-* **Canlı Nüfus Akışı:** Gerçek zamanlı dünya nüfusu artışına karşı elenmeden son 1 kişi kalma mücadelesi.
-* **Farklı Oyun Modları:** Klasik Eleme Modu (Son 1), Sonsuz Rekor Modu ve 10 farklı Antrenman Arenası.
-* **Çoklu Dil Desteği:** Türkçe ve İngilizce arayüz.
+#### 🛠️ Tech & Philosophy
+* Crafted with pure HTML5, CSS3, and Vanilla JavaScript—zero external libraries, instant load times, and 100/100 PageSpeed performance.
 
-## 👨‍💻 Geliştirici
-**Kurtuluş Taş** ([@kurtulustas](https://github.com/kurtulustas))
+---
+🌐 **Play Live:** [https://kurtulustas.github.io/8-milyarda-1/](https://kurtulustas.github.io/8-milyarda-1/)
